@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { DBurl } from "./config.js";
+import { DBurl } from "../../config.js";
 
 export const ConnectionDB = async () => {
   console.log(DBurl);
@@ -7,7 +7,7 @@ export const ConnectionDB = async () => {
   mongoose
     .connect(`${DBurl}/EpicEatsExpress`)
     .then(() => {
-      console.log("Connection Successfull");
+      console.log("DB Connection Successfull");
     })
     .catch(() => {
       console.log("Failed");

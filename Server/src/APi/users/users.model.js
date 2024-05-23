@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+
 // Address schema for better readabillity
 const addressSchema = mongoose.Schema({
   Street: { type: String, required: true },
@@ -18,6 +19,17 @@ const userSchema = mongoose.Schema(
       trim: true,
       lowercase: true,
       match: [/^\S+@\S+\.\S+$/, "Please provide valid email address"],
+    },
+    phoneNumber: {
+      type: String,
+      required: [true, "Phone Number is required"],
+      validate: {
+        validator: function (v) {
+          return /^\d{10}$/.test(v); // Ensure phoneNumber is a 10-digit number
+        },
+        message: (props) =>
+          `${props.value} is not a valid 10-digit phone number!`,
+      },
     },
     password: {
       type: String,

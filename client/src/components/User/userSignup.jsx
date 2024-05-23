@@ -33,6 +33,7 @@ const UserSignUp = () => {
       </Box>
       <FormInput label="Full Name"></FormInput>
       <FormInput label="Email Address" type="email" />
+      <FormInput label="Phone Number" type="number" />
       <FormInput label="Password" type="password" />
       <FormInput label="Address" />
       <FormInput label="Pin Code" type="Number" />
