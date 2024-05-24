@@ -1,5 +1,5 @@
 import Joi from "joi";
-
+//user valadation schema
 export const userSchema = Joi.object({
   fullName: Joi.string().trim().min(1).required().messages({
     "string.base": "Full Name should be a type of 'text'",
@@ -69,4 +69,44 @@ export const loginSchema = Joi.object({
     "string.empty": "Password cannot be an empty field",
     "any.required": "Password is required",
   }),
+});
+
+// foodValidationSchema
+
+export const foodSchema = Joi.object({
+  name: Joi.string().trim().min(1).required().messages({
+    "string.base": "Name should be a type of text",
+    "string.empty": "Name cannot be an empty field",
+    "any.required": "Name is required",
+  }),
+  description: Joi.string().trim().min(1).required().messages({
+    "string.base": "Description should be a type of text",
+    "string.empty": "Description cannot be an empty field",
+    "any.required": "Description is required",
+  }),
+  img: Joi.string().uri().required().messages({
+    "string.uri": "Image must be a valid URL",
+    "string.empty": "Image URL cannot be an empty field",
+    "any.required": "Image is required",
+  }),
+  price: Joi.number().min(1).required().messages({
+    "number.base": "Price must be a number",
+    "number.min": "Price cannot be negative",
+    "any.required": "Price is required",
+  }),
+  category: Joi.string().trim().min(1).required().messages({
+    "string.base": "Category should be a type of text",
+    "string.empty": "Category cannot be an empty field",
+    "any.required": "Category is required",
+  }),
+  ingredients: Joi.array()
+    .items(Joi.string().trim().min(1))
+    .required()
+    .messages({
+      "array.base": "Ingredients must be an array",
+      "array.empty": "Ingredients cannot be an empty array",
+      "any.required": "Ingredients are required",
+      "string.base": "Each ingredient should be a type of text",
+      "string.empty": "Ingredients cannot contain empty values",
+    }),
 });

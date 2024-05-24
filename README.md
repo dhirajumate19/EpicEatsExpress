@@ -4,7 +4,7 @@ EpicEatsExpress EpicEatsExpress is a modern and efficient food delivery platform
 
 **1 Clone the repository:**
 
-git clone https://github.com/yourusername/EpicEatsExpress.git
+git clone https://github.com/dhirajumate19/EpicEatsExpress.git
 cd EpicEatsExpress
 
 **2 Backend Setup:**
