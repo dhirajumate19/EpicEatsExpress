@@ -1,3 +1,4 @@
+import mongoose, { isValidObjectId } from "mongoose";
 import {
   FailedResponse,
   SuccessResponse,
@@ -83,6 +84,29 @@ export const getProductItems = async (req, res) => {
     }
     // Send the response with retrieved food items
     res.send(SuccessResponse(foodList, "Food items retrieved."));
+  } catch (error) {
+    console.log(error);
+    res.send(FailedResponse(500, "Internal Error."));
+  }
+};
+
+export const getProductItemsById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    // Check if the provided ID is a valid MongoDB ObjectId
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).send(FailedResponse(400, "Invalid product ID."));
+    }
+    // Cast the ID to ObjectId
+    const objectId = mongoose.Types.ObjectId.createFromHexString(id);
+    // Find the product by ID
+    const product = await foodModel.findById(objectId);
+    // Check if the product exists
+    if (!product) {
+      return res.send(FailedResponse(404, "Product not found."));
+    }
+    // Send the response with the product
+    res.send(SuccessResponse(product, "Product retrieved successfully."));
   } catch (error) {
     console.log(error);
     res.send(FailedResponse(500, "Internal Error."));
