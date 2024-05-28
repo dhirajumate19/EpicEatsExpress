@@ -3,17 +3,22 @@ import {
   SuccessResponse,
 } from "../../utils/responses/response.js";
 import { foodModel } from "./food.model.js";
+
+// Controller function to add products
 export const addProductsController = async (req, res) => {
   try {
     const foodData = req.body;
+    // Check if the request body is an array
     if (!Array.isArray(foodData)) {
       return res.send(
-        FailedResponse(400, "Invalid request!, Expected an Array")
+        FailedResponse(400, "Invalid request! Expected an Array.")
       );
     }
     let response = [];
+    // Iterate through each food item in the request
     for (const foodInfo of foodData) {
       const { name, description, img, price, category, ingredients } = foodInfo;
+      // Create a new food model instance
       const newFood = new foodModel({
         name,
         description,
@@ -22,43 +27,36 @@ export const addProductsController = async (req, res) => {
         category,
         ingredients,
       });
+      // Save the new food item to the database
       response.push(await newFood.save());
     }
 
-    res.send(SuccessResponse(response, "Products added successfully"));
+    res.send(SuccessResponse(response, "Products added successfully."));
   } catch (error) {
-    res.send(FailedResponse(500, "Internal Error"));
+    res.send(FailedResponse(500, "Internal Error."));
   }
 };
+
+// Controller function to retrieve product items
 export const getProductItems = async (req, res) => {
   try {
-    let { categories, minPrice, maxPrice, ingredients, search } = req.query;
+    let { category, minPrice, maxPrice, ingredients, search } = req.query;
 
-    const pipeline = [];
-
-    // Match stage to filter documents based on category and ingredient
-    if (categories) {
-      pipeline.push({
-        $match: { categories: categories },
-      });
+    let pipeline = [];
+    // Construct aggregation pipeline based on query parameters
+    if (category && category.length > 0) {
+      pipeline.push({ $match: { category: category } });
+    }
+    if (minPrice || maxPrice) {
+      const priceMatch = {};
+      if (minPrice) priceMatch["$gte"] = parseFloat(minPrice);
+      if (maxPrice) priceMatch["$lte"] = parseFloat(maxPrice);
+      pipeline.push({ $match: { price: priceMatch } });
     }
     if (ingredients) {
-      pipeline.push({ $match: { ingredients: ingredients } });
+      const ingredientsArray = ingredients.split(",");
+      pipeline.push({ $match: { ingredients: { $in: ingredientsArray } } });
     }
-
-    // Add a match stage to filter by price range
-    if (maxPrice || minPrice) {
-      const priceMatch = {};
-      if (minPrice) {
-        priceMatch["$gte"] = parseFloat(minPrice);
-      }
-      if (maxPrice) {
-        priceMatch["$lte"] = parseFloat(maxPrice);
-      }
-      pipeline.push({ $match: { "price.org": priceMatch } });
-    }
-
-    // Add a match stage to search by name or description
     if (search) {
       pipeline.push({
         $match: {
@@ -69,22 +67,24 @@ export const getProductItems = async (req, res) => {
         },
       });
     }
-
-    // Check if the pipeline is empty
-    if (pipeline.length === 0) {
-      const allPRoduct = await foodModel.find();
-      return res.send(SuccessResponse(allPRoduct, "all data"));
+    // Execute aggregation pipeline or find operation based on pipeline length
+    const foodList =
+      pipeline.length !== 0
+        ? await foodModel.aggregate(pipeline)
+        : await foodModel.find();
+    // Check if any food items were found
+    if (foodList.length === 0) {
+      return res.send(
+        SuccessResponse(
+          [],
+          "No food items matched the filters. Please try something else."
+        )
+      );
     }
-
-    console.log("pipeline", pipeline[0]);
-
-    // Execute the aggregation pipeline
-    const foodList = await foodModel.aggregate(pipeline);
-
-    // Send the response
-    res.send(SuccessResponse(foodList, "Food Retrieved"));
+    // Send the response with retrieved food items
+    res.send(SuccessResponse(foodList, "Food items retrieved."));
   } catch (error) {
     console.log(error);
-    res.send(FailedResponse(500, "Internal Error"));
+    res.send(FailedResponse(500, "Internal Error."));
   }
 };
