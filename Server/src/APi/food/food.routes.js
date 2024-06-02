@@ -5,10 +5,16 @@ import {
   getProductItemsById,
 } from "./food.controller.js";
 import { foodValidation } from "./food.validation.js";
+import { authenticateToken } from "../Auth/authToken.js";
 
 const foodRouter = express.Router();
 
-foodRouter.post("/food", foodValidation, addProductsController);
-foodRouter.get("/", getProductItems);
-foodRouter.get("/:id", getProductItemsById);
+foodRouter.post(
+  "/food",
+  foodValidation,
+  authenticateToken,
+  addProductsController
+);
+foodRouter.get("/", authenticateToken, getProductItems);
+foodRouter.get("/:id", authenticateToken, getProductItemsById);
 export default foodRouter;

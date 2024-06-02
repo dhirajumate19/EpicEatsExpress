@@ -1,4 +1,4 @@
-import { foodSchema } from "../../services/ValidationService.js";
+import { foodSchema } from "../../services/Validation/ValidationService.js";
 import {
   FailedResponse,
   SuccessResponse,

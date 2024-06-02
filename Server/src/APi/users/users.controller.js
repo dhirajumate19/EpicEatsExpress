@@ -1,12 +1,13 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { userModel } from "./users.model.js";
+import { authenticationUser, userModel } from "./users.model.js";
 import {
   FailedResponse,
   SuccessResponse,
 } from "../../utils/responses/response.js";
-import { S_Key } from "../../../config.js";
+import { S_Key } from "../../services/JWT/JWT.config.js";
+import { generateToken } from "../../services/JWT/JWT.service.js";
 
 // Controller function for user creation
 export const userCreationController = async (req, res) => {
@@ -57,33 +58,19 @@ export const userLoginController = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find the user in the database based on email
-    const userFind = await userModel.findOne({ email: email });
+    const verifiedUser = await authenticationUser(email, password);
 
-    // If user does not exist, send a failure response
-    if (!userFind) {
-      return res
-        .status(400)
-        .send(FailedResponse(400, `${email} does not match`));
+    if (!verifiedUser.data) {
+      return res.send(FailedResponse(403, "Login failed"));
     }
-
-    // Check if the entered password matches the user's password
-    const isCorrectPassword = bcrypt.compareSync(password, userFind.password);
-
-    // If password does not match, send a failure response
-    if (!isCorrectPassword) {
-      return res
-        .status(400)
-        .send(FailedResponse(400, `Password does not match`));
-    }
-
+    // console.log("payload in contro", verifiedUser);
     // Generate JWT token for user authentication
-    const token = jwt.sign({ email }, S_Key);
+    const token = await generateToken({ userId: verifiedUser.data.userId });
 
     // Send success response with token and user details
     res
       .status(201)
-      .send(SuccessResponse({ token, UserDetail: userFind }, "User Login"));
+      .send(SuccessResponse({ token, UserDetail: verifiedUser }, "User Login"));
   } catch (error) {
     // If an error occurs, log the error and send a failure response
     console.log(error);

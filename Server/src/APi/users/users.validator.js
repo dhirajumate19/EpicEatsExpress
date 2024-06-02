@@ -1,4 +1,7 @@
-import { loginSchema, userSchema } from "../../services/ValidationService.js";
+import {
+  loginSchema,
+  userSchema,
+} from "../../services/Validation/ValidationService.js";
 
 import { FailedResponse } from "../../utils/responses/response.js";
 // Function to check if a string is not empty and trimmed

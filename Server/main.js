@@ -1,10 +1,10 @@
 import express from "express";
 import "dotenv/config";
-import { ConnectionDB } from "./src/services/connectionDB.js";
 
 import userRouter from "./src/APi/users/users.routes.js";
-import { App_PORT, S_Key } from "./config.js";
+import { App_PORT } from "./config.js";
 import foodRouter from "./src/APi/food/food.routes.js";
+import { ConnectionDB } from "./src/services/Database/connectionDB.js";
 
 //create instance of express
 const app = express();
@@ -23,5 +23,4 @@ app.use("/api/v1", foodRouter);
 
 app.listen(App_PORT, () => {
   console.log(`The Surver is running on Port  ${App_PORT}`);
-  console.log(`secreat key ${S_Key}`);
 });

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import { SuccessResponse } from "../../utils/responses/response.js";
 
 // Address schema for better readabillity
 const addressSchema = mongoose.Schema({
@@ -57,7 +58,7 @@ const userSchema = mongoose.Schema(
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    this.password = bcrypt.hash(this.password, salt);
   }
   next();
 });
@@ -65,5 +66,35 @@ userSchema.pre("save", async function (next) {
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
+
+export const authenticationUser = async (email, password) => {
+  try {
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+      return failedResponse(400, "User not found");
+    }
+
+    const isMatch = await user.matchPassword(password);
+
+    if (!isMatch) {
+      return failedResponse(400, "Password does not match");
+    }
+
+    const response = {
+      userId: user._id,
+      userEmail: user.email,
+      userName: user.fullName,
+      userPhone: user.phoneNumber,
+      userAddress: user.address,
+      userPinCode: user.pinCode,
+    };
+    return SuccessResponse(response, "Password Match");
+  } catch (error) {
+    console.log("err:", error);
+    return failedResponse(403, "Unable to do authentication");
+  }
+};
+
 // Create and export the user model
 export const userModel = mongoose.model("User", userSchema);
