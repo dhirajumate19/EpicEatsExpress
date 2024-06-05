@@ -3,16 +3,16 @@ import bcrypt from "bcrypt";
 import { SuccessResponse } from "../../utils/responses/response.js";
 
 // Address schema for better readabillity
-const addressSchema = mongoose.Schema({
-  Street: { type: String, required: true },
-  city: { type: String, required: true },
-  state: { type: String, required: true },
-  country: { type: String, required: true },
-});
+// const addressSchema = mongoose.Schema({
+//   Street: { type: String, required: true },
+//   city: { type: String, required: true },
+//   state: { type: String, required: true },
+//   country: { type: String, required: true },
+// });
 // User schema
 const userSchema = mongoose.Schema(
   {
-    fullName: { type: String, required: [true, "Full name is required"] },
+    name: { type: String, required: [true, "Name is required"] },
     email: {
       type: String,
       required: [true, "Email is required"],
@@ -37,20 +37,20 @@ const userSchema = mongoose.Schema(
       required: [true, "Password is required"],
       minlength: [6, "Password must br at least 6 character"],
     },
-    address: {
-      type: addressSchema,
-      required: true,
-    },
-    pinCode: {
-      type: Number,
-      required: true,
-      validate: {
-        validator: function (v) {
-          return /\d{6}/.test(v); // Ensure pinCode is a 5-digit number
-        },
-        message: (props) => `${props.value} is not a valid pin code!`,
-      },
-    },
+    // address: {
+    //   type: addressSchema,
+    //   required: true,
+    // },
+    // pinCode: {
+    //   type: Number,
+    //   required: true,
+    //   validate: {
+    //     validator: function (v) {
+    //       return /\d{6}/.test(v); // Ensure pinCode is a 5-digit number
+    //     },
+    //     message: (props) => `${props.value} is not a valid pin code!`,
+    //   },
+    // },
   },
   { timestamps: true }
 );
@@ -84,10 +84,10 @@ export const authenticationUser = async (email, password) => {
     const response = {
       userId: user._id,
       userEmail: user.email,
-      userName: user.fullName,
+      userName: user.name,
       userPhone: user.phoneNumber,
-      userAddress: user.address,
-      userPinCode: user.pinCode,
+      // userAddress: user.address,
+      // userPinCode: user.pinCode,
     };
     return SuccessResponse(response, "Password Match");
   } catch (error) {

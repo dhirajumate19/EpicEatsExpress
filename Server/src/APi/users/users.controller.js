@@ -12,8 +12,7 @@ import { generateToken } from "../../services/JWT/JWT.service.js";
 // Controller function for user creation
 export const userCreationController = async (req, res) => {
   try {
-    const { fullName, email, phoneNumber, password, address, pinCode } =
-      req.body;
+    const { name, email, phoneNumber, password, address, pinCode } = req.body;
 
     // Check if the user already exists in the database
     const existingUser = await userModel.findOne({ email: email });
@@ -27,7 +26,7 @@ export const userCreationController = async (req, res) => {
 
     // Create a new user instance
     const newUser = new userModel({
-      fullName,
+      name,
       email,
       phoneNumber,
       password,

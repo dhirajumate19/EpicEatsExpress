@@ -97,7 +97,7 @@ const Authentication = ({ setOpenAuth, openAuth }) => {
           </CloseButton>
           {login ? (
             <>
-              <UserSignin />
+              <UserSignin setOpenAuth={setOpenAuth} />
               <Text>
                 {" "}
                 Don't Have an Account?{" "}

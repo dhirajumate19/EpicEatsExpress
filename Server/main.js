@@ -1,5 +1,6 @@
 import express from "express";
 import "dotenv/config";
+import cors from "cors";
 
 import userRouter from "./src/APi/users/users.routes.js";
 import { App_PORT } from "./config.js";
@@ -10,6 +11,9 @@ import { ConnectionDB } from "./src/services/Database/connectionDB.js";
 const app = express();
 // Parse JSON bodies up to 50MB
 app.use(express.json({ limit: "50mb" }));
+
+//enble cors
+app.use(cors());
 
 // Parse URL-encoded bodies (form submissions)
 app.use(express.urlencoded({ extended: true }));
