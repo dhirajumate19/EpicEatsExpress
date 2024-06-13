@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import { SuccessResponse } from "../../utils/responses/response.js";
+import {
+  FailedResponse,
+  SuccessResponse,
+} from "../../utils/responses/response.js";
 
 // Address schema for better readabillity
 // const addressSchema = mongoose.Schema({
@@ -58,12 +61,14 @@ const userSchema = mongoose.Schema(
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     const salt = await bcrypt.genSalt(10);
-    this.password = bcrypt.hash(this.password, salt);
+    this.password = await bcrypt.hash(this.password, salt);
   }
   next();
 });
 // Method to compare entered password with hashed password
 userSchema.methods.matchPassword = async function (enteredPassword) {
+  console.log("Entered Password:", enteredPassword);
+  console.log("Hashed Password:", this.password);
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
@@ -72,13 +77,13 @@ export const authenticationUser = async (email, password) => {
     const user = await userModel.findOne({ email });
 
     if (!user) {
-      return failedResponse(400, "User not found");
+      return FailedResponse(400, "User not found");
     }
-
+    console.log("password", password);
     const isMatch = await user.matchPassword(password);
-
+    console.log("afetr", isMatch);
     if (!isMatch) {
-      return failedResponse(400, "Password does not match");
+      return FailedResponse(400, "Password does not match");
     }
 
     const response = {
@@ -92,7 +97,7 @@ export const authenticationUser = async (email, password) => {
     return SuccessResponse(response, "Password Match");
   } catch (error) {
     console.log("err:", error);
-    return failedResponse(403, "Unable to do authentication");
+    return FailedResponse(403, "Unable to do authentication");
   }
 };
 

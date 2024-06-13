@@ -1,11 +1,12 @@
-import { Box, Modal, Typography } from "@mui/material";
+import { Box, Button, Modal, Typography } from "@mui/material";
 import styled from "styled-components";
 import logo from "../assets/Logo.png";
 import AuthImage from "../assets/AuthImage.jpg";
 import { Close } from "@mui/icons-material";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import UserSignUp from "./User/userSignup";
 import UserSignin from "./User/userSignin";
+import { AuthContext } from "../StateManagement/context/AuthContext";
 
 const StyledContainer = styled(Box)`
   display: flex;
@@ -77,7 +78,8 @@ const TextButton = styled(Typography)`
   transition: all 0.3s ease;
   font-weight: 600;
 `;
-const Authentication = ({ setOpenAuth, openAuth }) => {
+const Authentication = () => {
+  const { openAuth, setOpenAuth } = useContext(AuthContext);
   const [login, setLogin] = useState(false);
 
   return (
@@ -90,7 +92,7 @@ const Authentication = ({ setOpenAuth, openAuth }) => {
         <StyledRight>
           <CloseButton>
             <Close
-              onClose={() => {
+              onClick={() => {
                 setOpenAuth(false);
               }}
             />
@@ -106,7 +108,7 @@ const Authentication = ({ setOpenAuth, openAuth }) => {
             </>
           ) : (
             <>
-              <UserSignUp />
+              <UserSignUp setOpenAuth={setOpenAuth} />
               <Text>
                 Already have an account?{" "}
                 <TextButton onClick={() => setLogin(true)}>Sign In</TextButton>

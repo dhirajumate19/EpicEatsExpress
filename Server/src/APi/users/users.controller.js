@@ -6,7 +6,7 @@ import {
   FailedResponse,
   SuccessResponse,
 } from "../../utils/responses/response.js";
-import { S_Key } from "../../services/JWT/JWT.config.js";
+
 import { generateToken } from "../../services/JWT/JWT.service.js";
 
 // Controller function for user creation
@@ -21,7 +21,7 @@ export const userCreationController = async (req, res) => {
     if (existingUser) {
       return res
         .status(400)
-        .send(FailedResponse(400, `User with email ${email} already exists`));
+        .send(FailedResponse(400, `User with email ID already exists`));
     }
 
     // Create a new user instance
@@ -58,7 +58,7 @@ export const userLoginController = async (req, res) => {
     const { email, password } = req.body;
 
     const verifiedUser = await authenticationUser(email, password);
-
+    console.log("verified ", verifiedUser);
     if (!verifiedUser.data) {
       return res.send(FailedResponse(403, "Login failed"));
     }

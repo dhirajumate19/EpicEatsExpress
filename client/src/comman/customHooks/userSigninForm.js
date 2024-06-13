@@ -1,23 +1,16 @@
-import { useEffect, useState } from "react";
 import axios from "axios";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
-import {
-  signupFailure,
-  signupSuccess,
-} from "../../StateManagement/reducer/userSlice";
-import { useNavigate } from "react-router-dom";
+import { signinSuccess } from "../../StateManagement/reducer/userSlice";
 
-//pending validation at client side
-
-const useUserSignUpForm = (initialState) => {
+const useUserSignInForm = (initialState) => {
   const [form, setForm] = useState(initialState);
   const [error, setError] = useState({});
   const [success, setSuccess] = useState(false);
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setForm((prevForm) => ({
       ...prevForm,
       [name]: value,
@@ -31,27 +24,14 @@ const useUserSignUpForm = (initialState) => {
     }
   };
 
-  const validation = ({ name, email, password, phoneNumber }) => {
+  const validation = ({ email, password }) => {
     const errors = {};
-
-    if (!name) {
-      errors.name = "Name is required!";
-    }
-
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
       errors.email = "Email is required!";
     } else if (!emailRegex.test(email)) {
       errors.email = "Invalid email format!";
     }
-
-    const phoneRegex = /^\d{10}$/;
-    if (!phoneNumber) {
-      errors.phoneNumber = "Phone Number is required!";
-    } else if (!phoneRegex.test(phoneNumber)) {
-      errors.phoneNumber = "Phone Number must be exactly 10 digits!";
-    }
-
     const passwordMinLength = 6;
     const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
     if (!password) {
@@ -64,51 +44,35 @@ const useUserSignUpForm = (initialState) => {
 
     return errors;
   };
-  useEffect(() => {
-    if (success) {
-      navigate("/");
-    }
-  }, [success, navigate]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const error = validation(form);
+
     if (Object.keys(error).length > 0) {
       setError(error);
       return;
     }
     try {
       const response = await axios.post(
-        "http://localhost:3001/api/v1/signup",
+        "http://localhost:3001/api/v1/signin",
         form
       );
-
-      // Check if response has the expected structure
-      if (
-        response.data &&
-        response.status === 201 &&
-        response.data.meta.message === "New User Added"
-      ) {
-        console.log("User created successfully:", response.data.data.Record);
-        dispatch(signupSuccess(response.data.data.Record));
-
-        setSuccess(true);
-        setError({});
-      } else {
-        console.log("Unexpected response format:", response);
-        throw new Error("Unexpected response format");
-      }
+      const { token, UserDetail } = await response.data.data;
+      // console.log("data token", response.data.token["accessToken"]);
+      console.log(response.data);
+      dispatch(signinSuccess({ user: UserDetail.data, token }));
+      setSuccess(true);
+      setError({});
     } catch (err) {
+      console.log("error in catch", err);
       if (err.response && err.response.data) {
         setError({ general: err.response.data.meta.message });
-        dispatch(signupFailure(err.response.data.message));
       } else {
         setError({ general: "Signup failed!" });
-        dispatch(signupFailure("Signup failed!"));
       }
       setSuccess(false);
     }
   };
-
   return {
     form,
     error,
@@ -117,5 +81,4 @@ const useUserSignUpForm = (initialState) => {
     handleSubmit,
   };
 };
-
-export default useUserSignUpForm;
+export default useUserSignInForm;

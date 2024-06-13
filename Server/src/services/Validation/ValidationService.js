@@ -65,10 +65,16 @@ export const loginSchema = Joi.object({
     "string.empty": "Email cannot be an empty field",
     "any.required": "Email is required",
   }),
-  password: Joi.string().required().messages({
-    "string.empty": "Password cannot be an empty field",
-    "any.required": "Password is required",
-  }),
+  password: Joi.string()
+    .min(6)
+    .pattern(new RegExp("^(?=.*[!@#$%^&*])"))
+    .required()
+    .messages({
+      "string.min": "Password must be at least 6 characters long",
+      "string.pattern.base":
+        "Password must contain at least one special character",
+      "any.required": "Password is required",
+    }),
 });
 
 // foodValidationSchema

@@ -1,11 +1,29 @@
-import React, { useState } from 'react';
-import {Link} from 'react-router-dom'
-import styled from 'styled-components';
-import { Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Tooltip, Typography } from '@mui/material';
-import { SearchRounded, FavoriteBorder, ShoppingCartOutlined, Menu as MenuIcon } from '@mui/icons-material';
-import logo from '../assets/Logo.png'; // Adjust the path as necessary
-import { NavLink } from 'react-router-dom';
-import UserButton from '../comman/button';
+import React, { useContext, useState } from "react";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
+import {
+  Avatar,
+  Box,
+  Button,
+  Container,
+  IconButton,
+  Menu,
+  MenuItem,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import {
+  SearchRounded,
+  FavoriteBorder,
+  ShoppingCartOutlined,
+  Menu as MenuIcon,
+} from "@mui/icons-material";
+import logo from "../assets/Logo.png"; // Adjust the path as necessary
+import { NavLink } from "react-router-dom";
+import UserButton from "../comman/button";
+import { useDispatch } from "react-redux";
+import { logout } from "../StateManagement/reducer/userSlice";
+import { AuthContext } from "../StateManagement/context/AuthContext";
 
 const StyledAppBar = styled.div`
   background-color: ${({ theme }) => theme.bg};
@@ -39,14 +57,15 @@ border: 1px solid ${({ theme }) => theme.primary};
   padding: 8px 12px;
 `;
 
-const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
-  const pages = ['Home', 'Dishes', 'Order', 'Contact'];
-  const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const Navbar = ({ currentUser }) => {
+  const pages = ["Home", "Dishes", "Order", "Contact"];
+  const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
+  const { setOpenAuth } = useContext(AuthContext);
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const dispatch = useDispatch();
 
-  console.log("navbar",openAuth);
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -66,27 +85,34 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
   return (
     <StyledAppBar>
       <Container maxWidth="xl">
-        <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box
+          sx={{
+            flexGrow: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             <Typography
               variant="h6"
               noWrap
               component={Link}
-              to='/'
+              to="/"
               sx={{
-                display: { xs: 'none', md: 'flex' },
-                fontFamily: 'monospace',
+                display: { xs: "none", md: "flex" },
+                fontFamily: "monospace",
                 fontWeight: 700,
-                letterSpacing: '.3rem',
-                color: '#FFFFFF',
-                textDecoration: 'none',
+                letterSpacing: ".3rem",
+                color: "#FFFFFF",
+                textDecoration: "none",
               }}
             >
               EpicEatsExpress
             </Typography>
           </Box>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -101,19 +127,19 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
               id="menu-appbar"
               anchorEl={anchorElNav}
               anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
+                vertical: "bottom",
+                horizontal: "left",
               }}
               keepMounted
               transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
+                vertical: "top",
+                horizontal: "left",
               }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
               sx={{
-                display: { xs: 'block', md: 'none' },
-                color: 'black',
+                display: { xs: "block", md: "none" },
+                color: "black",
               }}
             >
               {pages.map((page) => (
@@ -123,11 +149,27 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
               ))}
               <MenuItem onClick={handleCloseNavMenu}>
                 {currentUser ? (
-                  <TextButton>Logout</TextButton>
+                  <TextButton
+                    onClick={() => {
+                      dispatch(logout());
+                    }}
+                  >
+                    Logout
+                  </TextButton>
                 ) : (
-                  <div style={{ display: 'flex', gap: '12px' }}>
-                    <UserButton text="Sign Up" outlined small onClick={() => setOpenAuth(true)} />
-                    <UserButton text="Sign In" small onClick={() => setOpenAuth(true)} />
+                  <div style={{ display: "flex", gap: "12px" }}>
+                    <UserButton
+                      text="Sign Up"
+                      small
+                      outlined
+                      onClick={() => setOpenAuth(true)}
+                    />
+                    <UserButton
+                      text="Sign In"
+                      small
+                      outlined
+                      onClick={() => setOpenAuth(true)}
+                    />
                   </div>
                 )}
               </MenuItem>
@@ -138,37 +180,50 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
             variant="h5"
             noWrap
             component={Link}
-              to='/'
+            to="/"
             sx={{
-              display: { xs: 'flex', md: 'none' },
+              display: { xs: "flex", md: "none" },
               flexGrow: 1,
-              fontFamily: 'monospace',
+              fontFamily: "monospace",
               fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'orange',
-              textDecoration: 'none',
+              letterSpacing: ".3rem",
+              color: "orange",
+              textDecoration: "none",
             }}
           >
             EpicEatsExpress
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
-              <Button key={page} onClick={handleCloseNavMenu} sx={{ my: 2, color: 'black', display: 'block' }}>
+              <Button
+                key={page}
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: "black", display: "block" }}
+              >
                 {page}
               </Button>
             ))}
             {currentUser ? (
-              <TextButton>Logout</TextButton>
+              <TextButton onClick={() => dispatch(logout())}>Logout</TextButton>
             ) : (
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <UserButton text="Sign Up" outlined small onClick={() => setOpenAuth(true)} />
-                <UserButton text="Sign In" small onClick={() => setOpenAuth(true)} />
+              <div style={{ display: "flex", gap: "12px" }}>
+                <UserButton
+                  text="Sign Up"
+                  outlined
+                  small
+                  onClick={() => setOpenAuth(true)}
+                />
+                <UserButton
+                  text="Sign In"
+                  small
+                  onClick={() => setOpenAuth(true)}
+                />
               </div>
             )}
           </Box>
 
-          <Box sx={{ display: 'flex', marginRight: '5px' }}>
+          <Box sx={{ display: "flex", marginRight: "5px" }}>
             <IconButton component={NavLink} to="/search" color="inherit">
               <SearchRounded />
             </IconButton>
@@ -187,17 +242,17 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
               </IconButton>
             </Tooltip>
             <Menu
-              sx={{ mt: '45px' }}
+              sx={{ mt: "45px" }}
               id="menu-appbar"
               anchorEl={anchorElUser}
               anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+                vertical: "top",
+                horizontal: "right",
               }}
               keepMounted
               transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+                vertical: "top",
+                horizontal: "right",
               }}
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
