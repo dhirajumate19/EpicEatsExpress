@@ -227,7 +227,7 @@ const Navbar = ({ currentUser }) => {
             <IconButton component={NavLink} to="/search" color="inherit">
               <SearchRounded />
             </IconButton>
-            <IconButton component={NavLink} to="/favorite" color="inherit">
+            <IconButton component={NavLink} to="/favorites" color="inherit">
               <FavoriteBorder />
             </IconButton>
             <IconButton component={NavLink} to="/cart" color="inherit">

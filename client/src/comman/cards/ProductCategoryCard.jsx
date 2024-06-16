@@ -8,31 +8,52 @@ import {
   styled,
 } from "@mui/material";
 
-const CategoryImage = styled(CardMedia)({
-  height: 50,
-});
 const CategoryCard = styled(Card)({
+  position: "relative",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "space-between",
-  padding: 20,
+  padding: 10,
   textAlign: "center",
+  overflow: "hidden",
+});
+const HoverImage = styled(CardMedia)({
+  borderRadius: "6px",
+  objectFit: "cover",
+  transition: "transform 0.3s ease-in-out",
+  "&:hover": {
+    transform: "scale(1.1)",
+  },
+});
+const OverlayText = styled(Box)({
+  position: "absolute",
+  top: 10,
+  right: 9,
+  backgroundColor: "rgba(0,250,0,0.3)",
+  color: "white",
+  padding: "5px 10px",
+  borderRadius: "0 0 0 5px",
+  fontSize: "0.7rem",
+  zIndex: 1,
 });
 const ProductCategoryCard = ({ category }) => {
   console.log("image", category.img);
   return (
     <>
       <CategoryCard>
-        <CategoryImage src={category.img} alt="category" />
-        <CardContent sx={{ padding: 20 }}>
-          <Button variant="contained" color="primary">
+        <OverlayText>{category.off}</OverlayText>
+        <HoverImage
+          component="img"
+          height="140"
+          image={category.img}
+          alt={category.name}
+        />
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Button variant="text" color="primary">
             {category.name}
           </Button>
-          <Typography variant="caption" color="CaptionText">
-            {category.off}
-          </Typography>
-        </CardContent>
+        </Box>
       </CategoryCard>
     </>
   );

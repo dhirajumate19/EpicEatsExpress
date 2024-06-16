@@ -34,6 +34,7 @@ export const addProductsController = async (req, res) => {
 
     res.send(SuccessResponse(response, "Products added successfully."));
   } catch (error) {
+    console.log("internal erro", error);
     res.send(FailedResponse(500, "Internal Error."));
   }
 };

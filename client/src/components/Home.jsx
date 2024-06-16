@@ -14,6 +14,7 @@ import { category } from "../utils/data.js";
 import headerImage from "../assets/Header.png";
 import ProductCategoryCard from "../comman/cards/ProductCategoryCard.jsx";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2.js";
+import ProductCard from "../comman/cards/ProductCard.jsx";
 const HeaderImage = styled("img")({
   width: "100%",
   height: "auto",
@@ -50,7 +51,6 @@ const HomePage = () => {
         </Container>
       </Box>
       {/* Add all product  */}
-
       <Container sx={{ textAlign: "center", padding: "10px" }}>
         <Typography
           variant="h5"
@@ -60,13 +60,28 @@ const HomePage = () => {
         </Typography>
         <Grid2 container spacing={4}>
           {category.map((category, index) => (
-            <Grid2 item="true" xs={12} sm={6} md={4} key={index}>
+            <Grid2 item="true" xs={12} sm={6} md={2} key={index}>
               <ProductCategoryCard category={category} />
             </Grid2>
           ))}
         </Grid2>
       </Container>
-
+      {/* Most Popular Food */}
+      <Container sx={{ textAlign: "center", padding: "10px" }}>
+        <Typography
+          variant="h5"
+          sx={{ textAlign: "center", color: { color }, fontSize: "2rem" }}
+        >
+          Most Popular
+        </Typography>
+        <Grid2 container spacing={4}>
+          {category.map((category, index) => (
+            <Grid2 item="true" xs={12} sm={6} md={4} key={index}>
+              <ProductCard category={category} />
+            </Grid2>
+          ))}
+        </Grid2>
+      </Container>
       {/* Features Section */}
       <Container sx={{ padding: "60px 0" }}>
         <Typography
@@ -111,9 +126,7 @@ const HomePage = () => {
           </Grid>
         </Grid>
       </Container>
-
       {/* Popular Dishes Section */}
-
       {/* Testimonials Section */}
       <Container sx={{ padding: "60px 0" }}>
         <Typography
@@ -138,7 +151,6 @@ const HomePage = () => {
           </Grid>
         </Grid>
       </Container>
-
       {/* How It Works Section */}
       <Box sx={{ backgroundColor: "#f7f7f7", padding: "60px 0" }}>
         <Container>
@@ -177,7 +189,6 @@ const HomePage = () => {
           </Grid>
         </Container>
       </Box>
-
       {/* Footer */}
       <Box sx={{ backgroundColor: "#333", color: "white", padding: "20px 0" }}>
         <Container>

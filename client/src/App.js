@@ -8,6 +8,10 @@ import Authentication from "./components/Authentication";
 import { useSelector } from "react-redux";
 import { AuthContext } from "./StateManagement/context/AuthContext";
 
+import Cart from "./components/cart/cart";
+import Favorites from "./components/Favourites";
+import FoodListing from "./components/Foods/FoodListing";
+
 const Container = styled.div``;
 function App() {
   const { openAuth } = useContext(AuthContext);
@@ -22,6 +26,9 @@ function App() {
 
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/favorites" element={<Favorites />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/dishes" element={<FoodListing />} />
           </Routes>
           {openAuth && <Authentication />}
         </Container>

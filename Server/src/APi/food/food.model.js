@@ -1,15 +1,18 @@
 import mongoose from "mongoose";
-
+import validator from "validator";
 const foodSchema = mongoose.Schema(
   {
     name: { type: String, required: [true, "Food name is required"] },
     description: { type: String, required: [true, "Description is Required"] },
     img: {
       type: String,
-      required: [true, "Image is required"],
+      required: true,
       validate: {
         validator: function (v) {
-          return /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|svg))$/i.test(v);
+          return validator.isURL(v, {
+            protocols: ["http", "https"],
+            require_protocol: true,
+          });
         },
         message: (props) => `${props.value} is not a valid image URL!`,
       },
