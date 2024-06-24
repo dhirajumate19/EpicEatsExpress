@@ -77,6 +77,7 @@ const HomePage = () => {
         <Grid2 container spacing={4}>
           {category.map((category, index) => (
             <Grid2 item="true" xs={12} sm={6} md={4} key={index}>
+              {/* {category.img} */}
               <ProductCard category={category} />
             </Grid2>
           ))}

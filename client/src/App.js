@@ -11,6 +11,7 @@ import { AuthContext } from "./StateManagement/context/AuthContext";
 import Cart from "./components/cart/cart";
 import Favorites from "./components/Favourites";
 import FoodListing from "./components/Foods/FoodListing";
+import FoodDetails from "./components/Foods/FoodDeatils";
 
 const Container = styled.div``;
 function App() {
@@ -29,6 +30,7 @@ function App() {
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/dishes" element={<FoodListing />} />
+            <Route path="/dishes/:id" element={<FoodDetails />} />
           </Routes>
           {openAuth && <Authentication />}
         </Container>

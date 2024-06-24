@@ -16,5 +16,5 @@ foodRouter.post(
   addProductsController
 );
 foodRouter.get("/getfood", getProductItems);
-foodRouter.get("/:id", authenticateToken, getProductItemsById);
+foodRouter.get("/getfood/:id", authenticateToken, getProductItemsById);
 export default foodRouter;

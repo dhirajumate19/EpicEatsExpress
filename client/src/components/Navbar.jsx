@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import {
   Avatar,
@@ -7,8 +7,10 @@ import {
   Button,
   Container,
   IconButton,
+  InputAdornment,
   Menu,
   MenuItem,
+  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -24,6 +26,7 @@ import UserButton from "../comman/button";
 import { useDispatch } from "react-redux";
 import { logout } from "../StateManagement/reducer/userSlice";
 import { AuthContext } from "../StateManagement/context/AuthContext";
+import SearchInput from "./Search";
 
 const StyledAppBar = styled.div`
   background-color: ${({ theme }) => theme.bg};
@@ -64,7 +67,11 @@ const Navbar = ({ currentUser }) => {
   const { setOpenAuth } = useContext(AuthContext);
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+
+  const [search, setSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -74,14 +81,34 @@ const Navbar = ({ currentUser }) => {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseNavMenu = () => {
+  const handleCloseNavMenu = (page) => {
     setAnchorElNav(null);
+    console.log("page", page);
+    if (page) {
+      console.log("lowercasr", page.toLowerCase());
+      page === "Home" ? navigate("/") : navigate(`/${page.toLowerCase()}`);
+    }
   };
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
 
+  const handleSearchInputToggle = () => {
+    setSearch((prev) => !prev);
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleSearchSubmit = (event) => {
+    if (event.key === "Enter") {
+      // Implement your search logic here
+      console.log("Search query:", searchQuery);
+      // Redirect to search results page or perform the search
+    }
+  };
   return (
     <StyledAppBar>
       <Container maxWidth="xl">
@@ -143,8 +170,13 @@ const Navbar = ({ currentUser }) => {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem
+                  key={page}
+                  onClick={() => {
+                    handleCloseNavMenu(page);
+                  }}
+                >
+                  <Link textAlign="center">{page}</Link>
                 </MenuItem>
               ))}
               <MenuItem onClick={handleCloseNavMenu}>
@@ -198,7 +230,9 @@ const Navbar = ({ currentUser }) => {
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
+                onClick={() => {
+                  handleCloseNavMenu(page);
+                }}
                 sx={{ my: 2, color: "black", display: "block" }}
               >
                 {page}
@@ -224,9 +258,24 @@ const Navbar = ({ currentUser }) => {
           </Box>
 
           <Box sx={{ display: "flex", marginRight: "5px" }}>
-            <IconButton component={NavLink} to="/search" color="inherit">
+            <IconButton color="inherit" onClick={handleSearchInputToggle}>
               <SearchRounded />
             </IconButton>
+            {search && (
+              <TextField
+                autoFocus
+                value={searchQuery}
+                onChange={handleSearchChange}
+                onKeyDown={handleSearchSubmit}
+                placeholder="Search..."
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end"></InputAdornment>
+                  ),
+                }}
+                sx={{ marginLeft: "10px", width: "200px" }}
+              />
+            )}
             <IconButton component={NavLink} to="/favorites" color="inherit">
               <FavoriteBorder />
             </IconButton>

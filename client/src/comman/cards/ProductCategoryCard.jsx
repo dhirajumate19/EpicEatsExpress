@@ -38,7 +38,6 @@ const OverlayText = styled(Box)({
   zIndex: 1,
 });
 const ProductCategoryCard = ({ category }) => {
-  console.log("image", category.img);
   return (
     <>
       <CategoryCard>

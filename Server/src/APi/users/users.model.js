@@ -40,20 +40,25 @@ const userSchema = mongoose.Schema(
       required: [true, "Password is required"],
       minlength: [6, "Password must br at least 6 character"],
     },
-    // address: {
-    //   type: addressSchema,
-    //   required: true,
-    // },
-    // pinCode: {
-    //   type: Number,
-    //   required: true,
-    //   validate: {
-    //     validator: function (v) {
-    //       return /\d{6}/.test(v); // Ensure pinCode is a 5-digit number
-    //     },
-    //     message: (props) => `${props.value} is not a valid pin code!`,
-    //   },
-    // },
+    favourites: {
+      type: [mongoose.Types.ObjectId],
+      ref: "Food",
+      default: [],
+    },
+    order: {
+      type: [mongoose.Types.ObjectId],
+      ref: "Order",
+      default: [],
+    },
+    cart: {
+      type: [
+        {
+          product: { type: mongoose.Schema.Types.ObjectId, ref: "Food" },
+          quantity: { type: Number, default: 1 },
+        },
+      ],
+      default: [],
+    },
   },
   { timestamps: true }
 );

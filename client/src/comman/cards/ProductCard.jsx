@@ -9,6 +9,7 @@ import {
   styled,
 } from "@mui/material";
 import { Box } from "@mui/system";
+import { useNavigate } from "react-router-dom";
 
 const CategoryCard = styled(Card)(({ theme }) => ({
   display: "flex",
@@ -73,14 +74,17 @@ const OverlayRating = styled(Box)(({ theme }) => ({
   zIndex: 10,
 }));
 
-const ProductCard = ({ product }) => {
-  console.log("proudct card", product.img);
+const ProductCard = ({ category, goToDeatil }) => {
   return (
-    <CategoryCard>
+    <CategoryCard
+      onClick={() => {
+        goToDeatil(category._id);
+      }}
+    >
       <Top>
         <HoverImage
           component="img"
-          image={product.img}
+          image={category.img}
           className="hover-image"
         />
         <IconMenu className="icon-menu">
@@ -96,9 +100,9 @@ const ProductCard = ({ product }) => {
         </OverlayRating>
       </Top>
       <CardContent>
-        <Typography variant="h6">{product.name}</Typography>
+        <Typography variant="h6">{category.name}</Typography>
         <Typography variant="body2" color="textSecondary">
-          {product.description}
+          {category.description}
         </Typography>
         <Typography
           sx={{
@@ -108,7 +112,7 @@ const ProductCard = ({ product }) => {
             textAlign: "center",
           }}
         >
-          {product.price} <span style={{ fontSize: "14px" }}>$20</span>{" "}
+          {category.price} <span style={{ fontSize: "14px" }}>$20</span>{" "}
           <Box sx={{ fontSize: "12px", fontWeight: 500, color: "green" }}>
             (20% Off)
           </Box>

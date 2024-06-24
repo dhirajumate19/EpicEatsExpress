@@ -7,6 +7,18 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("EpicEatExpressAccessToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 export const fetchProducts = async () => {
   try {
     const response = await api.get("/getfood");
@@ -16,3 +28,14 @@ export const fetchProducts = async () => {
     throw error;
   }
 };
+export const fetchProductsbyCategory = async (query) => {
+  try {
+    const response = await api.get(`/getfood?category=${query}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error;
+  }
+};
+
+export const getProductDetails = async (id) => await api.get(`/getfood/${id}`);
