@@ -47,13 +47,13 @@ const userSchema = mongoose.Schema(
     },
     order: {
       type: [mongoose.Types.ObjectId],
-      ref: "Order",
+      ref: "order",
       default: [],
     },
     cart: {
       type: [
         {
-          product: { type: mongoose.Schema.Types.ObjectId, ref: "Food" },
+          product: { type: mongoose.Schema.Types.ObjectId, ref: "foods" },
           quantity: { type: Number, default: 1 },
         },
       ],

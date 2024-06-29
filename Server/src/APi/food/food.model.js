@@ -1,9 +1,32 @@
 import mongoose from "mongoose";
 import validator from "validator";
+
+// Nested price schema
+const priceSchema = mongoose.Schema(
+  {
+    org: {
+      type: Number,
+      required: true,
+      min: [0, "Original price cannot be negative"],
+    },
+    mrp: {
+      type: Number,
+      required: true,
+      min: [0, "MRP cannot be negative"],
+    },
+    off: {
+      type: Number,
+      required: true,
+      min: [0, "Discount cannot be negative"],
+    },
+  },
+  { _id: false }
+);
+
 const foodSchema = mongoose.Schema(
   {
     name: { type: String, required: [true, "Food name is required"] },
-    description: { type: String, required: [true, "Description is Required"] },
+    description: { type: String, required: [true, "Description is required"] },
     img: {
       type: String,
       required: true,
@@ -18,32 +41,23 @@ const foodSchema = mongoose.Schema(
       },
     },
     price: {
-      type: Number,
-      required: [true, "Price is required"],
-      min: [0, "Price cannot be negative"], // Ensure price is not negative
-      max: [10000, "Price cannot exceed 10000"], // Arbitrary maximum value for validation
-
-      default: { org: 0.0, mrp: 0.0, off: 0 },
-      validate: {
-        validator: function (v) {
-          return v >= 0; // Additional validation for non-negative price
-        },
-        message: (props) => `${props.value} is not a valid price!`,
-      },
+      type: priceSchema,
+      required: true,
     },
     category: { type: String, required: [true, "Category is required"] },
     ingredients: {
       type: [String],
-      required: [true, "Ingredients is required"],
+      required: [true, "Ingredients are required"],
     },
   },
   {
     timestamps: true,
   }
 );
+
 // Additional custom validation to ensure that the offered price is not greater than the original price
 foodSchema.path("price").validate(function (value) {
-  return !(this.price && this.price.off > this.price.org);
+  return value.off <= value.org;
 }, "Offered price cannot exceed original price");
 
 export const foodModel = mongoose.model("Food", foodSchema);

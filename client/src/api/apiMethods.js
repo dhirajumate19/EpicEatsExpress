@@ -39,3 +39,33 @@ export const fetchProductsbyCategory = async (query) => {
 };
 
 export const getProductDetails = async (id) => await api.get(`/getfood/${id}`);
+
+export const addToCart = async (data) => {
+  try {
+    const response = await api.post("/addcart", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error;
+  }
+};
+
+export const getCart = async () => {
+  try {
+    const response = await api.get("/getcart");
+    console.log("response get cart", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error;
+  }
+};
+export const removeCartItem = async (data) => {
+  try {
+    const response = await api.delete("/removecartitem", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error;
+  }
+};

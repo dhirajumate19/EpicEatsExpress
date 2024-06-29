@@ -19,11 +19,11 @@ const FoodListing = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [price, setPrice] = useState("");
   const navigate = useNavigate();
   const onHandlerClick = (id) => {
     console.log("click", id);
     navigate(`/dishes/${id}`);
-    console.log("log possible");
   };
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -46,19 +46,21 @@ const FoodListing = () => {
         setLoading(true);
         const data = await fetchProducts();
 
-        if (Array.isArray(data.data)) {
-          setProducts(data.data);
+        if (Array.isArray(data.data) && data.data.length > 0) {
+          setProducts(data.data); // Update state with fetched data
+
           setLoading(false);
         } else {
-          console.error("Data is not array", data);
+          console.error("Data is not an array or is empty", data);
         }
       } catch (error) {
-        console.log("Error while fetching", error);
+        console.error("Error while fetching", error);
       }
     };
     getProdcts();
   }, []);
 
+  console.log("final product", products);
   return (
     <Box>
       <Container>
@@ -97,6 +99,7 @@ const FoodListing = () => {
               ) : (
                 <>
                   {" "}
+                  {/* //Food list */}
                   {products.length > 0 ? (
                     products.map((product, index) => (
                       <Grid2 item="true" xs={12} sm={6} md={4} key={product.id}>

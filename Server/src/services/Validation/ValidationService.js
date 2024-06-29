@@ -95,11 +95,29 @@ export const foodSchema = Joi.object({
     "string.empty": "Image URL cannot be an empty field",
     "any.required": "Image is required",
   }),
-  price: Joi.number().min(1).required().messages({
-    "number.base": "Price must be a number",
-    "number.min": "Price cannot be negative",
-    "any.required": "Price is required",
-  }),
+  price: Joi.object({
+    org: Joi.number().min(0).required().messages({
+      "number.base": "Original price must be a number",
+      "number.min": "Original price cannot be negative",
+      "any.required": "Original price is required",
+    }),
+    mrp: Joi.number().min(0).required().messages({
+      "number.base": "MRP must be a number",
+      "number.min": "MRP cannot be negative",
+      "any.required": "MRP is required",
+    }),
+    off: Joi.number().min(0).required().messages({
+      "number.base": "Offered price must be a number",
+      "number.min": "Offered price cannot be negative",
+      "any.required": "Offered price is required",
+    }),
+  })
+    .required()
+    .messages({
+      "object.base": "Price must be an object",
+      "object.empty": "Price object cannot be empty",
+      "any.required": "Price is required",
+    }),
   category: Joi.string().trim().min(1).required().messages({
     "string.base": "Category should be a type of text",
     "string.empty": "Category cannot be an empty field",

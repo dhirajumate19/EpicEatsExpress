@@ -6,40 +6,77 @@ import {
   Rating,
   Typography,
   IconButton,
+  Snackbar,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
-import { getProductDetails } from "../../api/apiMethods";
+import { addToCart, getProductDetails } from "../../api/apiMethods";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FavoriteBorderOutlined, FavoriteRounded } from "@mui/icons-material";
 
 const FoodDetails = () => {
   const { id } = useParams();
-  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.user.currentUser);
   const navigate = useNavigate();
   const [favorite, setFavorite] = useState(false);
   const [favoriteLoading, setFavoriteLoading] = useState(false);
   const [cartLoading, setCartLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [product, setProduct] = useState();
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [price, setPrice] = useState("");
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   useEffect(() => {
     const fetchProduct = async () => {
-      const response = await getProductDetails(id);
-      setProduct(response.data.data);
-      setLoading(false);
+      try {
+        const response = await getProductDetails(id);
+        setProduct(await response.data.data);
+        setPrice(response.data.data.price);
+        console.log("price of product", response.data.data.price.org);
+        setLoading(false);
+      } catch (error) {
+        console.log("error", error);
+        if (error.response && error.response.status === 401) {
+          setSnackbarMessage("You must be logged in to add items to the cart.");
+        } else {
+          setSnackbarMessage("Failed to add item to cart. Please try again.");
+        }
+        setSnackbarOpen(true);
+      } finally {
+        setCartLoading(false);
+      }
     };
     fetchProduct();
   }, [id]);
-  console.log("product", product);
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
+  const addCart = async () => {
+    setCartLoading(true);
+    try {
+      const response = await addToCart({ productId: product._id, quantity: 1 });
+      console.log("saved food in db", response);
+      console.log("pro id", product._id);
+      navigate("/cart");
+    } catch (error) {
+      console.log("error", error);
+      if (error.response && error.response.status === 401) {
+        setSnackbarMessage("You must be logged in to add items to the cart.");
+      } else {
+        setSnackbarMessage("Failed to add item to cart. Please try again.");
+      }
+      setSnackbarOpen(true);
+    } finally {
+      setCartLoading(false);
+    }
+  };
   if (loading) {
     return <CircularProgress />;
   }
-  const addCart = () => {
-    setCartLoading(true);
-    navigate("/cart");
-  };
 
   return (
     <Container
@@ -54,7 +91,7 @@ const FoodDetails = () => {
         background: (theme) => theme.bg,
       }}
     >
-      {loading ? (
+      {!currentUser ? (
         <CircularProgress />
       ) : (
         <Box
@@ -102,7 +139,7 @@ const FoodDetails = () => {
                 fontWeight: 500,
               }}
             >
-              ₹{product?.price}{" "}
+              ₹{product?.price.org}{" "}
               <Typography
                 variant="body2"
                 sx={{
@@ -110,11 +147,11 @@ const FoodDetails = () => {
                   color: (theme) => theme.text_secondary + 50,
                 }}
               >
-                ₹{200}
+                ₹{price.mrp}
               </Typography>{" "}
               <Typography variant="body2" sx={{ color: "green" }}>
                 {" "}
-                (₹{2}% Off){" "}
+                (₹{price.off}% Off){" "}
               </Typography>
             </Box>
             <Typography variant="body1">{product?.desc}</Typography>
@@ -179,6 +216,12 @@ const FoodDetails = () => {
           </Box>
         </Box>
       )}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        message={snackbarMessage}
+      />
     </Container>
   );
 };

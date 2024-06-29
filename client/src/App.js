@@ -1,17 +1,18 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import styled, { ThemeProvider } from "styled-components";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
 import { lightTheme } from "./utils/theme";
 import Authentication from "./components/Authentication";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AuthContext } from "./StateManagement/context/AuthContext";
 
 import Cart from "./components/cart/cart";
 import Favorites from "./components/Favourites";
 import FoodListing from "./components/Foods/FoodListing";
 import FoodDetails from "./components/Foods/FoodDeatils";
+import { logout } from "./StateManagement/reducer/userSlice";
 
 const Container = styled.div``;
 function App() {
@@ -19,6 +20,14 @@ function App() {
   const currentUser = useSelector((state) => state.user.currentUser);
   // const [openAuth, setOpenAuth] = useState(false);
   console.log("curretnUser", currentUser);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Clear localStorage and dispatch logout action on page load
+    localStorage.clear();
+    dispatch(logout());
+  }, [dispatch]);
+
   return (
     <ThemeProvider theme={lightTheme}>
       <BrowserRouter>

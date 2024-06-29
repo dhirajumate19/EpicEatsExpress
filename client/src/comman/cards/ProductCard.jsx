@@ -9,6 +9,7 @@ import {
   styled,
 } from "@mui/material";
 import { Box } from "@mui/system";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const CategoryCard = styled(Card)(({ theme }) => ({
@@ -75,18 +76,17 @@ const OverlayRating = styled(Box)(({ theme }) => ({
 }));
 
 const ProductCard = ({ category, goToDeatil }) => {
+  const { _id, name, description, img, price } = category;
+  console.log("price", price);
+  const { org = 0, mrp = 0, off = 0 } = price || {};
   return (
     <CategoryCard
       onClick={() => {
-        goToDeatil(category._id);
+        goToDeatil(_id);
       }}
     >
       <Top>
-        <HoverImage
-          component="img"
-          image={category.img}
-          className="hover-image"
-        />
+        <HoverImage component="img" image={img} className="hover-image" />
         <IconMenu className="icon-menu">
           <MenuItem>
             <FavoriteRounded sx={{ fontSize: "20px", color: "red" }} />
@@ -100,23 +100,34 @@ const ProductCard = ({ category, goToDeatil }) => {
         </OverlayRating>
       </Top>
       <CardContent>
-        <Typography variant="h6">{category.name}</Typography>
+        <Typography variant="h6">{name}</Typography>
         <Typography variant="body2" color="textSecondary">
-          {category.description}
+          {description}
         </Typography>
-        <Typography
+        <Box
           sx={{
-            fontSize: "18px",
             display: "flex",
-            gap: 1,
-            textAlign: "center",
+            alignItems: "center",
+            gap: "8px",
+            fontSize: "22px",
+            fontWeight: 500,
           }}
         >
-          {category.price} <span style={{ fontSize: "14px" }}>$20</span>{" "}
-          <Box sx={{ fontSize: "12px", fontWeight: 500, color: "green" }}>
-            (20% Off)
-          </Box>
-        </Typography>
+          ₹{org}{" "}
+          <Typography
+            variant="body2"
+            sx={{
+              textDecoration: "line-through",
+              color: (theme) => theme.text_secondary + 50,
+            }}
+          >
+            ₹{mrp}
+          </Typography>{" "}
+          <Typography variant="body2" sx={{ color: "green" }}>
+            {" "}
+            (₹{off} Off){" "}
+          </Typography>
+        </Box>
       </CardContent>
     </CategoryCard>
   );
